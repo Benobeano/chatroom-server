@@ -7,7 +7,7 @@ logger = setup_logger()
 def handle_client(conn, addr):
     name = f"{addr[0]}:{addr[1]}"
     current_room = None
-    conn.sendall(b"Welcome to Multi Chat! Use /join <room> to get started.\n")
+    adapter.send_message(b"Welcome to Multi Chat! Use /join <room> to get started.\n")
 
     try:
         with conn:
@@ -22,20 +22,20 @@ def handle_client(conn, addr):
                         leave_room(current_room, conn)
                     join_room(room, conn)
                     current_room = room
-                    conn.sendall(f"Joined room {room}.\n".encode())
+                    adapter.send_message(f"Joined room {room}.\n".encode())
                 elif text == "/leave":
                     if current_room:
                         leave_room(current_room, conn)
-                        conn.sendall(b"Left the room.\n")
+                        adapter.send_message(b"Left the room.\n")
                         current_room = None
                     else:
-                        conn.sendall(b"You are not in any room.\n")
+                        adapter.send_message(b"You are not in any room.\n")
                 elif text == "/quit":
-                    conn.sendall(b"Goodbye!\n")
+                    adapter.send_message(b"Goodbye!\n")
                     break
                 else:
                     if not current_room:
-                        conn.sendall(b"Join a room first with /join <room>.\n")
+                        adapter.send_message(b"Join a room first with /join <room>.\n")
                         continue
                     timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
                     log_entry = f"[{timestamp}] [{name}] [{current_room}] : {text}"
