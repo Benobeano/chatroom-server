@@ -1,6 +1,4 @@
 # chatroom-server
-
-"""
 Simple thread‑per‑client TCP chat server supporting multiple dynamic rooms.
 Designed for Oracle Cloud always‑free micro VM (1 vCPU / 1 GB RAM).
 No external dependencies – works with Python ≥ 3.9.
@@ -24,7 +22,6 @@ Protocol (line‑oriented UTF‑8):
 
 Log format (server.log, daily rotation):
     [YYYY‑MM‑DD HH:MM:SS] [user@addr] [room] : message
-"""
 
 Client repository: https://github.com/Benobeano/chatroom-client
 
