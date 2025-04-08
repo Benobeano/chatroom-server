@@ -1,49 +1,56 @@
+# chat_server.py
+
 from datetime import datetime
-from room_manager import join_room, leave_room, broadcast
+from room_manager import get_room_manager
 from log_config import setup_logger
+from socket_adapter import SocketAdapter
+from commands import JoinCommand, LeaveCommand, QuitCommand, ChatCommand
 
 logger = setup_logger()
 
 def handle_client(conn, addr):
-    name = f"{addr[0]}:{addr[1]}"
-    current_room = None
-    adapter.send_message(b"Welcome to Multi Chat! Use /join <room> to get started.\n")
+    adapter = SocketAdapter(conn)
+    manager = get_room_manager()
+
+    # a dictionary of possible commands
+    commands_map = {
+        "/join": JoinCommand(),
+        "/leave": LeaveCommand(),
+        "/quit": QuitCommand(),
+    }
+
+    # store session state
+    state = {
+        "conn": conn,             # raw socket
+        "name": f"{addr[0]}:{addr[1]}",
+        "current_room": None,
+        "quit": False
+    }
+
+    adapter.send_message("Welcome to Multi Chat! Use /join <room> to get started.\n")
 
     try:
         with conn:
-            while True:
+            while not state["quit"]:
                 data = conn.recv(1024)
                 if not data:
                     break
                 text = data.decode().strip()
+
+                # dispatch logic
                 if text.startswith("/join "):
-                    room = text.split(maxsplit=1)[1]
-                    if current_room:
-                        leave_room(current_room, conn)
-                    join_room(room, conn)
-                    current_room = room
-                    adapter.send_message(f"Joined room {room}.\n".encode())
-                elif text == "/leave":
-                    if current_room:
-                        leave_room(current_room, conn)
-                        adapter.send_message(b"Left the room.\n")
-                        current_room = None
-                    else:
-                        adapter.send_message(b"You are not in any room.\n")
-                elif text == "/quit":
-                    adapter.send_message(b"Goodbye!\n")
-                    break
+                    # get the part after /join
+                    remainder = text[len("/join "):]
+                    commands_map["/join"].execute(adapter, state, remainder)
+                elif text in commands_map:
+                    # e.g. "/leave", "/quit"
+                    commands_map[text].execute(adapter, state, "")
                 else:
-                    if not current_room:
-                        adapter.send_message(b"Join a room first with /join <room>.\n")
-                        continue
-                    timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
-                    log_entry = f"[{timestamp}] [{name}] [{current_room}] : {text}"
-                    logger.info(log_entry)
-                    broadcast_msg = f"[{current_room}] {name}: {text}\n"
-                    broadcast(current_room, broadcast_msg, sender=conn)
+                    # default to ChatCommand
+                    ChatCommand().execute(adapter, state, text)
     finally:
-        if current_room:
-            leave_room(current_room, conn)
-        conn.close()
+        # cleanup
+        if state["current_room"]:
+            manager.leave_room(state["current_room"], conn)
+        adapter.close()
         print(f"Disconnected: {addr}")
