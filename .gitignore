@@ -1,2 +1,4 @@
 server.log
 server.log.*
+server-logs/
+__pycache__/

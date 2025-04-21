@@ -55,3 +55,13 @@ class ChatCommand(Command):
         logger.info(log_entry)
         broadcast_msg = f"[{state['current_room']}] {state['name']}: {text}\n"
         manager.broadcast(state["current_room"], broadcast_msg, sender=state["conn"])
+        
+class RoomsCommand(Command):
+    def execute(self, adapter: SocketAdapter, state: dict, text: str) -> None:
+        manager = get_room_manager()
+        rooms = manager.list_rooms()
+        if rooms:
+            room_list = ", ".join(sorted(rooms))
+            adapter.send_message(f"Active rooms: {room_list}\n")
+        else:
+            adapter.send_message("No rooms are currently active.\n")

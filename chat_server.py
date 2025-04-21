@@ -4,7 +4,7 @@ from datetime import datetime
 from room_manager import get_room_manager
 from log_config import setup_logger
 from socket_adapter import SocketAdapter
-from commands import JoinCommand, LeaveCommand, QuitCommand, ChatCommand
+from commands import JoinCommand, LeaveCommand, QuitCommand, ChatCommand, RoomsCommand
 
 logger = setup_logger()
 
@@ -17,6 +17,7 @@ def handle_client(conn, addr):
         "/join": JoinCommand(),
         "/leave": LeaveCommand(),
         "/quit": QuitCommand(),
+        "/rooms": RoomsCommand(),
     }
 
     # store session state

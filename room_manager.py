@@ -29,6 +29,9 @@ class _RoomManagerSingleton:
                     sock.sendall(message.encode())
                 except OSError:
                     pass
+    def list_rooms(self) -> list[str]:
+        with self.rooms_lock:
+            return list(self.rooms.keys())
 
 
 _manager_instance = None
