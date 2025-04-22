@@ -41,7 +41,7 @@ def test_join_chat_quit_flow(monkeypatch):
     mock_chat.execute.assert_called_once()
     mock_quit.execute.assert_called_once()
 
-def test_handle_client_sets_quit_flag(monkeypatch):
+def test_quit_flag_handling(monkeypatch):
     adapter = Mock()
     monkeypatch.setattr("chat_server.SocketAdapter", lambda conn: adapter)
     monkeypatch.setattr("chat_server.get_room_manager", lambda: Mock())
