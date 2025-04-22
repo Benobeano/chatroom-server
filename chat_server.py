@@ -9,8 +9,7 @@ logger = setup_logger()
 def handle_client(conn, addr):
     adapter = SocketAdapter(conn)
     manager = get_room_manager()
-
-    # a dictionary of possible commands
+    # a dictionary of commands
     commands_map = {
         "/join": JoinCommand(),
         "/leave": LeaveCommand(),
