@@ -1,4 +1,3 @@
-# commands.py
 from abc import ABC, abstractmethod
 from socket_adapter import SocketAdapter
 from room_manager import get_room_manager

@@ -1,5 +1,3 @@
-# chat_server.py
-
 from datetime import datetime
 from room_manager import get_room_manager
 from log_config import setup_logger

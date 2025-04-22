@@ -1,4 +1,3 @@
-# room_manager.py
 import threading
 from typing import Dict, Set
 import socket
