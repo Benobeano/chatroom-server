@@ -30,7 +30,6 @@ def test_logging_and_graceful_disconnect(tmp_path):
     LOG_FILE = LOG_DIR / "server.log"
     os.makedirs(LOG_DIR, exist_ok=True)
 
-    # Override log directory by setting environment variable or monkeypatching (if supported)
     server_process = subprocess.Popen(
         ["python3", "server.py", str(PORT)],
         stdout=subprocess.PIPE,
@@ -39,7 +38,7 @@ def test_logging_and_graceful_disconnect(tmp_path):
         env={**os.environ, "PYTHONPATH": ".", "LOG_DIR": str(LOG_DIR)}
     )
 
-    time.sleep(1)  # Wait for server to start
+    time.sleep(2)  # Wait for server to start
 
     client_msgs = ["/join logtest", "Logging test message", "/quit"]
     output = []
