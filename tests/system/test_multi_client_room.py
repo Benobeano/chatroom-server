@@ -20,8 +20,11 @@ def create_client(messages_to_send, received_output):
             sock.connect(("127.0.0.1", PORT))
             time.sleep(0.2)  # wait for welcome message
             for msg in messages_to_send:
+                if msg == "__wait__":
+                    time.sleep(1)  # pause to let client 2 join
+                    continue
                 sock.sendall((msg + "\n").encode("utf-8"))
-                time.sleep(0.2)
+                time.sleep(0.2) 
             try:
                 sock.settimeout(1.0)
                 while True:
@@ -37,7 +40,7 @@ def test_two_clients_chat_in_same_room():
     server = start_server()
     time.sleep(1)  # let the server start
 
-    client1_msgs = ["/join testroom", "hello from client1", "/quit"]
+    client1_msgs = ["/join testroom", "__wait__", "hello from client1", "/quit"]
     client2_msgs = ["/join testroom"]
     client2_output = []
 
