@@ -7,7 +7,7 @@ def setup_logger(name="chat"):
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
 
-    log_dir = Path("server-logs")
+    log_dir = Path("LOG_DIR","server-logs")
     log_dir.mkdir(exist_ok=True)        # create folder if it doesn’t exist
     log_file = log_dir / "server.log"
 
