@@ -1,14 +1,15 @@
 import logging
 import logging.handlers
-import os
 from pathlib import Path
 
 def setup_logger(name="chat"):
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
 
-    log_dir = Path("LOG_DIR","server-logs")
-    log_dir.mkdir(exist_ok=True)        # create folder if it doesn’t exist
+    # Create server-logs folder relative to this file
+    log_dir = Path(__file__).parent / "server-logs"
+    log_dir.mkdir(exist_ok=True)
+
     log_file = log_dir / "server.log"
 
     handler = logging.handlers.TimedRotatingFileHandler(
